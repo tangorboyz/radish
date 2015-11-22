@@ -56,9 +56,9 @@ class RunnerTestCase(RadishTestCase):
         hook_mock.call.return_value = True
         runner = Runner(hook_mock)
         returncode = runner.run_step(step)
-        returncode.should.be.equal(0)
-        step.state.should.be.equal(Step.State.PASSED)
-        data.step_was_called.should.be.true
+        expect(returncode).to.be.equal(0)
+        expect(step.state).to.be.equal(Step.State.PASSED)
+        expect(data.step_was_called).to.be.true
 
     def test_running_a_scenario(self):
         """
@@ -82,9 +82,9 @@ class RunnerTestCase(RadishTestCase):
         hook_mock.call.return_value = True
         runner = Runner(hook_mock)
         returncode = runner.run_scenario(scenario)
-        returncode.should.be.equal(0)
-        step.state.should.be.equal(Step.State.PASSED)
-        data.step_was_called.should.be.true
+        expect(returncode).to.be.equal(0)
+        expect(step.state).to.be.equal(Step.State.PASSED)
+        expect(data.step_was_called).to.be.true
 
     def test_running_a_feature(self):
         """
@@ -111,8 +111,8 @@ class RunnerTestCase(RadishTestCase):
         hook_mock.call.return_value = True
         runner = Runner(hook_mock)
         runner.run_feature(feature)
-        step.state.should.be.equal(Step.State.PASSED)
-        data.step_was_called.should.be.true
+        expect(step.state).to.be.equal(Step.State.PASSED)
+        expect(data.step_was_called).to.be.true
 
     def test_running_all(self):
         """
@@ -139,8 +139,8 @@ class RunnerTestCase(RadishTestCase):
         hook_mock.call.return_value = True
         runner = Runner(hook_mock)
         runner.start([feature], None)
-        step.state.should.be.equal(Step.State.PASSED)
-        data.step_was_called.should.be.true
+        expect(step.state).to.be.equal(Step.State.PASSED)
+        expect(data.step_was_called).to.be.true
 
     def test_returncode_of_runner(self):
         """
@@ -173,8 +173,8 @@ class RunnerTestCase(RadishTestCase):
         hook_mock.call.return_value = True
         runner = Runner(hook_mock)
         returncode = runner.run_feature(feature)
-        returncode.should.be.equal(1)
-        step1.state.should.be.equal(Step.State.PASSED)
-        step2.state.should.be.equal(Step.State.FAILED)
-        scenario.state.should.be.equal(Step.State.FAILED)
-        feature.state.should.be.equal(Step.State.FAILED)
+        expect(returncode).to.be.equal(1)
+        expect(step1.state).to.be.equal(Step.State.PASSED)
+        expect(step2.state).to.be.equal(Step.State.FAILED)
+        expect(scenario.state).to.be.equal(Step.State.FAILED)
+        expect(feature.state).to.be.equal(Step.State.FAILED)

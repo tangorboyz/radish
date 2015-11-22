@@ -15,7 +15,7 @@ class StepRegistryTestCase(RadishTestCase):
             Test registering multiple steps
         """
         registry = StepRegistry()
-        registry.steps.should.be.empty
+        expect(registry.steps).to.be.empty
 
         def step_a():
             pass
@@ -24,19 +24,19 @@ class StepRegistryTestCase(RadishTestCase):
             pass
 
         registry.register("abc", step_a)
-        registry.steps.should.have.length_of(1)
-        registry.steps["abc"].should.be.equal(step_a)
+        expect(registry.steps).to.have.length_of(1)
+        expect(registry.steps["abc"]).to.be.equal(step_a)
 
         registry.register("def", step_b)
-        registry.steps.should.have.length_of(2)
-        registry.steps["def"].should.be.equal(step_b)
+        expect(registry.steps).to.have.length_of(2)
+        expect(registry.steps["def"]).to.be.equal(step_b)
 
     def test_registering_same_step(self):
         """
             Test registering step with same regex
         """
         registry = StepRegistry()
-        registry.steps.should.be.empty
+        expect(registry.steps).to.be.empty
 
         def step_a():
             pass
@@ -45,20 +45,20 @@ class StepRegistryTestCase(RadishTestCase):
             pass
 
         registry.register("abc", step_a)
-        registry.steps.should.have.length_of(1)
-        registry.steps["abc"].should.be.equal(step_a)
+        expect(registry.steps).to.have.length_of(1)
+        expect(registry.steps["abc"]).to.be.equal(step_a)
 
-        registry.register.when.called_with("abc", step_b).should.throw(SameStepError, "Cannot register step step_b with regex 'abc' because it is already used by step step_a")
+        expect(registry.register).when.called_with("abc", step_b).should.throw(SameStepError, "Cannot register step step_b with regex 'abc' because it is already used by step step_a")
 
-        registry.steps.should.have.length_of(1)
-        registry.steps["abc"].should.be.equal(step_a)
+        expect(registry.steps).to.have.length_of(1)
+        expect(registry.steps["abc"]).to.be.equal(step_a)
 
     def test_registering_object(self):
         """
             Test registering object as steps
         """
         registry = StepRegistry()
-        registry.steps.should.be.empty
+        expect(registry.steps).to.be.empty
 
         class MySteps(object):
             ignore = ["no_step_method"]
@@ -79,6 +79,6 @@ class StepRegistryTestCase(RadishTestCase):
         steps_object = MySteps()
         registry.register_object(steps_object)
 
-        registry.steps.should.have.length_of(2)
-        registry.steps["When I call some step"].should.be.equal(steps_object.some_step)
-        registry.steps["Then I expect some behaviour"].should.be.equal(steps_object.some_other_step)
+        expect(registry.steps).to.have.length_of(2)
+        expect(registry.steps["When I call some step"]).to.be.equal(steps_object.some_step)
+        expect(registry.steps["Then I expect some behaviour"]).to.be.equal(steps_object.some_other_step)

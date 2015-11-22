@@ -16,4 +16,4 @@ class UtilsTestCase(RadishTestCase):
             Test the expandpath utils method
         """
         os.environ["SOMEVAR"] = "foobar"
-        utils.expandpath.when.called_with("/some/path/with/$SOMEVAR").should.return_value("/some/path/with/foobar")
+        expect(utils.expandpath).when.called_with("/some/path/with/$SOMEVAR").should.return_value("/some/path/with/foobar")

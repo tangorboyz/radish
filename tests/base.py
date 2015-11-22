@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import sure
+from sure import expect
 from unittest import TestCase
 from mock import Mock, patch, MagicMock
 

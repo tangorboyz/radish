@@ -19,7 +19,7 @@ class StepTestCase(RadishTestCase):
             Test registering steps with decorator
         """
         registry = StepRegistry()
-        registry.steps.should.have.length_of(0)
+        expect(registry.steps).to.have.length_of(0)
 
         def step_a():
             pass
@@ -28,12 +28,12 @@ class StepTestCase(RadishTestCase):
             pass
 
         step("abc")(step_a)
-        registry.steps.should.have.length_of(1)
-        registry.steps["abc"].should.be.equal(step_a)
+        expect(registry.steps).to.have.length_of(1)
+        expect(registry.steps["abc"]).to.be.equal(step_a)
 
         step("def")(step_b)
-        registry.steps.should.have.length_of(2)
-        registry.steps["def"].should.be.equal(step_b)
+        expect(registry.steps).to.have.length_of(2)
+        expect(registry.steps["def"]).to.be.equal(step_b)
 
     def test_registering_steps_with_gherkin_decorators(self):
         """
@@ -49,20 +49,20 @@ class StepTestCase(RadishTestCase):
             pass
 
         registry = StepRegistry()
-        registry.steps.should.be.empty
+        expect(registry.steps).to.be.empty
 
         given(r"I have the number {:g}")(step_given)
-        registry.steps.should.have.length_of(1)
+        expect(registry.steps).to.have.length_of(1)
         registry.steps[r"Given I have the number {:g}"] = step_given
 
         # cannot test the when function because sure overwrites it!
         # stupid stuff
         # step_when(r"I add \d+ to my number")(step_when)
-        # registry.steps.should.have.length_of(2)
+        # registry.steps).to.have.length_of(2)
         # registry.steps[r"When I add \d+ to my number"] = step_when
 
         then(re.compile(r"I expect my number to be \d+"))(step_then)
-        registry.steps.should.have.length_of(2)
+        expect(registry.steps).to.have.length_of(2)
 
     def test_run_step_passed(self):
         """
@@ -78,9 +78,9 @@ class StepTestCase(RadishTestCase):
         step.definition_func = step_passed
         step.arguments = re.search(step.sentence, step.sentence).groups()
 
-        step.state.should.be.equal(Step.State.UNTESTED)
-        step.run.when.called_with().should.return_value(Step.State.PASSED)
-        data.step_was_run.should.be.true
+        expect(step.state).to.be.equal(Step.State.UNTESTED)
+        expect(step.run).when.called_with().should.return_value(Step.State.PASSED)
+        expect(data.step_was_run).to.be.true
 
     def test_run_step_with_arguments_passed(self):
         """
@@ -100,11 +100,11 @@ class StepTestCase(RadishTestCase):
         step.definition_func = step_passed
         step.arguments = re.search("I call a passing step with number argument (\d+) and string argument '(.*?)'", step.sentence).groups()
 
-        step.state.should.be.equal(Step.State.UNTESTED)
-        step.run.when.called_with().should.return_value(Step.State.PASSED)
-        data.step_was_run.should.be.true
-        data.number.should.be.equal(42)
-        data.string.should.be.equal("Tschau")
+        expect(step.state).to.be.equal(Step.State.UNTESTED)
+        expect(step.run).when.called_with().should.return_value(Step.State.PASSED)
+        expect(data.step_was_run).to.be.true
+        expect(data.number).to.be.equal(42)
+        expect(data.string).to.be.equal("Tschau")
 
     def test_run_step_with_keyword_arguments_passed(self):
         """
@@ -126,11 +126,11 @@ class StepTestCase(RadishTestCase):
         step.arguments = match.groups()
         step.keyword_arguments = match.groupdict()
 
-        step.state.should.be.equal(Step.State.UNTESTED)
-        step.run.when.called_with().should.return_value(Step.State.PASSED)
-        data.step_was_run.should.be.true
-        data.number.should.be.equal(42)
-        data.string.should.be.equal("Tschau")
+        expect(step.state).to.be.equal(Step.State.UNTESTED)
+        expect(step.run).when.called_with().should.return_value(Step.State.PASSED)
+        expect(data.step_was_run).to.be.true
+        expect(data.number).to.be.equal(42)
+        expect(data.string).to.be.equal("Tschau")
 
     def test_run_step_failed(self):
         """
@@ -147,15 +147,15 @@ class StepTestCase(RadishTestCase):
         step.definition_func = step_failed
         step.arguments = re.search(step.sentence, step.sentence).groups()
 
-        step.state.should.be.equal(Step.State.UNTESTED)
-        step.run.when.called_with().should.return_value(Step.State.FAILED)
-        step.failure.shouldnt.be.none
-        step.failure.reason.should.be.equal("This step fails by design")
-        data.step_was_run.should.be.true
+        expect(step.state).to.be.equal(Step.State.UNTESTED)
+        expect(step.run).when.called_with().should.return_value(Step.State.FAILED)
+        expect(step.failure).doesnt.be.none
+        expect(step.failure.reason).to.be.equal("This step fails by design")
+        expect(data.step_was_run).to.be.true
 
     def test_run_a_step_without_definition(self):
         """
             Test running a step without assining a definition
         """
         step = Step(1, "I call an invalid step", "somefile.feature", 3, None, True)
-        step.run.when.called_with().should.throw(RadishError, "The step 'I call an invalid step' does not have a step definition")
+        expect(step.run).when.called_with().should.throw(RadishError, "The step 'I call an invalid step' does not have a step definition")

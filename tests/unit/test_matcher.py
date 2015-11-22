@@ -22,17 +22,17 @@ class MatcherTestCase(RadishTestCase):
         steps = {re.compile(r"Given I have the number (\d+)"): "some_func", re.compile(r"I add (\d+) to my number"): "some_other_func"}
 
         arguments, keyword_arguments, func = matcher.match("Given I have the number 5", steps)
-        arguments.should.be.equal(("5",))
-        keyword_arguments.should.be.equal({})
-        func.should.be.equal("some_func")
+        expect(arguments).to.be.equal(("5",))
+        expect(keyword_arguments).to.be.equal({})
+        expect(func).to.be.equal("some_func")
 
         arguments, keyword_arguments, func = matcher.match("When I add 2 to my number", steps)
-        arguments.should.be.equal(("2",))
-        keyword_arguments.should.be.equal({})
-        func.should.be.equal("some_other_func")
+        expect(arguments).to.be.equal(("2",))
+        expect(keyword_arguments).to.be.equal({})
+        expect(func).to.be.equal("some_other_func")
 
         match = matcher.match("when I call a non-existing step", steps)
-        match.should.be.none
+        expect(match).to.be.none
 
     def test_merge_steps(self):
         """
@@ -49,10 +49,10 @@ class MatcherTestCase(RadishTestCase):
 
         matcher.merge_steps([feature], steps)
 
-        scenario.steps[0].definition_func.should.be.equal("some_func")
-        scenario.steps[0].arguments.should.be.equal(("5",))
-        scenario.steps[1].definition_func.should.be.equal("some_other_func")
-        scenario.steps[1].arguments.should.be.equal(("2",))
+        expect(scenario.steps[0].definition_func).to.be.equal("some_func")
+        expect(scenario.steps[0].arguments).to.be.equal(("5",))
+        expect(scenario.steps[1].definition_func).to.be.equal("some_other_func")
+        expect(scenario.steps[1].arguments).to.be.equal(("2",))
 
     def test_merge_non_existing_step(self):
         """
@@ -66,4 +66,4 @@ class MatcherTestCase(RadishTestCase):
         scenario.steps.append(Step(1, "When I call a non-existing step", "test.feature", 3, scenario, False))
         feature.scenarios.append(scenario)
 
-        matcher.merge_steps.when.called_with([feature], steps).should.throw(StepDefinitionNotFoundError, "Cannot find step definition for step 'When I call a non-existing step' in test.feature:3")
+        expect(matcher.merge_steps).when.called_with([feature], steps).should.throw(StepDefinitionNotFoundError, "Cannot find step definition for step 'When I call a non-existing step' in test.feature:3")

@@ -30,23 +30,23 @@ class FeatureTestCase(RadishTestCase):
 
         feature.scenarios.extend([scenario_1, scenario_outline_1, scenario_loop_1, scenario_2])
 
-        feature.all_scenarios.should.have.length_of(8)
-        feature.all_scenarios[0].should.be.equal(scenario_1)
-        feature.all_scenarios[1].should.be.equal(scenario_outline_1)
-        feature.all_scenarios[2].should.be.equal(scenario_outline_1_example_1)
-        feature.all_scenarios[3].should.be.equal(scenario_outline_1_example_2)
-        feature.all_scenarios[4].should.be.equal(scenario_loop_1)
-        feature.all_scenarios[5].should.be.equal(scenario_loop_1_example_1)
-        feature.all_scenarios[6].should.be.equal(scenario_loop_1_example_2)
-        feature.all_scenarios[7].should.be.equal(scenario_2)
+        expect(feature.all_scenarios).to.have.length_of(8)
+        expect(feature.all_scenarios[0]).to.be.equal(scenario_1)
+        expect(feature.all_scenarios[1]).to.be.equal(scenario_outline_1)
+        expect(feature.all_scenarios[2]).to.be.equal(scenario_outline_1_example_1)
+        expect(feature.all_scenarios[3]).to.be.equal(scenario_outline_1_example_2)
+        expect(feature.all_scenarios[4]).to.be.equal(scenario_loop_1)
+        expect(feature.all_scenarios[5]).to.be.equal(scenario_loop_1_example_1)
+        expect(feature.all_scenarios[6]).to.be.equal(scenario_loop_1_example_2)
+        expect(feature.all_scenarios[7]).to.be.equal(scenario_2)
 
     def test_feature_representations(self):
         """
             Test feature representations
         """
         feature = Feature(1, "Feature", "Some feature", "sometest.feature", 1)
-        str(feature).should.be.equal("Feature: Some feature from sometest.feature:1")
-        repr(feature).should.be.equal("<Feature: Some feature from sometest.feature:1>")
+        expect(str(feature)).to.be.equal("Feature: Some feature from sometest.feature:1")
+        expect(repr(feature)).to.be.equal("<Feature: Some feature from sometest.feature:1>")
 
     def test_feature_scenario_iterator(self):
         """
@@ -59,7 +59,7 @@ class FeatureTestCase(RadishTestCase):
         feature.scenarios.append(Mock(id=4))
 
         for expected_scenario_id, scenario in enumerate(feature, start=1):
-            scenario.id.should.be.equal(expected_scenario_id)
+            expect(scenario.id).to.be.equal(expected_scenario_id)
 
     def test_feature_get_scenario_by_sentence(self):
         """
@@ -71,9 +71,9 @@ class FeatureTestCase(RadishTestCase):
         scenario_3 = Mock(sentence="Third scenario")
         feature.scenarios.extend([scenario_1, scenario_2, scenario_3])
 
-        feature["First scenario"].should.be.equal(scenario_1)
-        feature["Second scenario"].should.be.equal(scenario_2)
-        feature["Third scenario"].should.be.equal(scenario_3)
+        expect(feature["First scenario"]).to.be.equal(scenario_1)
+        expect(feature["Second scenario"]).to.be.equal(scenario_2)
+        expect(feature["Third scenario"]).to.be.equal(scenario_3)
 
     def test_feature_state(self):
         """
@@ -87,45 +87,45 @@ class FeatureTestCase(RadishTestCase):
         scenario_3 = Mock(state=Step.State.UNTESTED)
         feature.scenarios.extend([scenario_1, scenario_2, scenario_outline, scenario_loop, scenario_3])
 
-        feature.state.should.be.equal(Step.State.UNTESTED)
+        expect(feature.state).to.be.equal(Step.State.UNTESTED)
 
         scenario_1.state = Step.State.SKIPPED
-        feature.state.should.be.equal(Step.State.SKIPPED)
+        expect(feature.state).to.be.equal(Step.State.SKIPPED)
 
         scenario_1.state = Step.State.FAILED
-        feature.state.should.be.equal(Step.State.FAILED)
+        expect(feature.state).to.be.equal(Step.State.FAILED)
 
         scenario_2.state = Step.State.PASSED
-        feature.state.should.be.equal(Step.State.FAILED)
+        expect(feature.state).to.be.equal(Step.State.FAILED)
 
         scenario_3.state = Step.State.PASSED
-        feature.state.should.be.equal(Step.State.FAILED)
+        expect(feature.state).to.be.equal(Step.State.FAILED)
 
         scenario_1.state = Step.State.PASSED
-        feature.state.should.be.equal(Step.State.PASSED)
+        expect(feature.state).to.be.equal(Step.State.PASSED)
 
     def test_feature_has_to_run(self):
         """
             Test feature's has to run functionality
         """
         f = Feature(1, "Feature", "Some feature", None, None, [Feature.Tag("foo", None), Feature.Tag("bar", None), Feature.Tag("bad_case", None)])
-        f.has_to_run.when.called_with(None, ["foo"], None).should.return_value(True)
-        f.has_to_run.when.called_with(None, ["good_case", "foo"], None).should.return_value(True)
-        f.has_to_run.when.called_with(None, ["good_case", "bar", "bad_case"], None).should.return_value(True)
-        f.has_to_run.when.called_with(None, ["good_case"], None).should.return_value(False)
+        expect(f.has_to_run).when.called_with(None, ["foo"], None).to.return_value(True)
+        expect(f.has_to_run).when.called_with(None, ["good_case", "foo"], None).to.return_value(True)
+        expect(f.has_to_run).when.called_with(None, ["good_case", "bar", "bad_case"], None).to.return_value(True)
+        expect(f.has_to_run).when.called_with(None, ["good_case"], None).to.return_value(False)
 
         f.scenarios.append(Mock(absolute_id=1, has_to_run=lambda x,y,z: False))
         f.scenarios.append(Mock(absolute_id=2, has_to_run=lambda x,y,z: False))
         f.scenarios.append(Mock(absolute_id=3, has_to_run=lambda x,y,z: False))
 
-        f.has_to_run.when.called_with([1], None, None).should.return_value(True)
-        f.has_to_run.when.called_with([1, 2], None, None).should.return_value(True)
-        f.has_to_run.when.called_with([3], None, None).should.return_value(True)
-        f.has_to_run.when.called_with([1, 4], None, None).should.return_value(True)
-        f.has_to_run.when.called_with([5, 4], None, None).should.return_value(False)
-        f.has_to_run.when.called_with([6], None, None).should.return_value(False)
+        expect(f.has_to_run).when.called_with([1], None, None).should.return_value(True)
+        expect(f.has_to_run).when.called_with([1, 2], None, None).should.return_value(True)
+        expect(f.has_to_run).when.called_with([3], None, None).should.return_value(True)
+        expect(f.has_to_run).when.called_with([1, 4], None, None).should.return_value(True)
+        expect(f.has_to_run).when.called_with([5, 4], None, None).should.return_value(False)
+        expect(f.has_to_run).when.called_with([6], None, None).should.return_value(False)
 
-        f.has_to_run.when.called_with([1], ["good_case"], None).should.return_value(True)
-        f.has_to_run.when.called_with([1, 2], ["foo", "bad_case"], None).should.return_value(True)
-        f.has_to_run.when.called_with([5, 4], ["bad_case"], None).should.return_value(True)
-        f.has_to_run.when.called_with([6], ["good_case"], None).should.return_value(False)
+        expect(f.has_to_run).when.called_with([1], ["good_case"], None).should.return_value(True)
+        expect(f.has_to_run).when.called_with([1, 2], ["foo", "bad_case"], None).should.return_value(True)
+        expect(f.has_to_run).when.called_with([5, 4], ["bad_case"], None).should.return_value(True)
+        expect(f.has_to_run).when.called_with([6], ["good_case"], None).should.return_value(False)

@@ -69,7 +69,7 @@ class ConsoleWriterTestCase(RadishTestCase):
         with patch("radish.extensions.console_writer.write", side_effect=patched_write):
             HookRegistry().call("before", "each_feature", feature)
 
-            data.console.should.be.equal("Feature: Some feature  # somefile.feature")
+            expect(data.console).to.be.equal("Feature: Some feature  # somefile.feature")
 
         feature.description.append("This is some description")
         feature.description.append("Because I want to test it")
@@ -77,7 +77,7 @@ class ConsoleWriterTestCase(RadishTestCase):
         with patch("radish.extensions.console_writer.write", side_effect=patched_write):
             HookRegistry().call("before", "each_feature", feature)
 
-            data.console.should.be.equal("""Feature: Some feature  # somefile.feature
+            expect(data.console).to.be.equal("""Feature: Some feature  # somefile.feature
     This is some description
     Because I want to test it""")
 
@@ -99,7 +99,7 @@ class ConsoleWriterTestCase(RadishTestCase):
         with patch("radish.extensions.console_writer.write", side_effect=patched_write):
             HookRegistry().call("before", "each_scenario", scenario)
 
-            data.console.should.be.equal("\n    Scenario: Some scenario")
+            expect(data.console).to.be.equal("\n    Scenario: Some scenario")
 
     def test_before_each_step(self):
         """
@@ -123,7 +123,7 @@ class ConsoleWriterTestCase(RadishTestCase):
         with patch("radish.extensions.console_writer.write", side_effect=patched_write):
             HookRegistry().call("before", "each_step", step)
 
-            data.console.should.be.equal("\r        I test the console writer")
+            expect(data.console).to.be.equal("\r        I test the console writer")
 
     def test_after_each_step(self):
         """
@@ -147,7 +147,7 @@ class ConsoleWriterTestCase(RadishTestCase):
         with patch("radish.extensions.console_writer.write", side_effect=patched_write):
             HookRegistry().call("after", "each_step", step)
 
-            data.console.should.be.equal("\rI test the console writer")
+            expect(data.console).to.be.equal("\rI test the console writer")
 
     def test_after_each_step_failed(self):
         """
@@ -176,5 +176,5 @@ class ConsoleWriterTestCase(RadishTestCase):
         with patch("radish.extensions.console_writer.write", side_effect=patched_write):
             HookRegistry().call("after", "each_step", step)
 
-            data.console.should.be.equal("""\rI test the console writer
+            expect(data.console).to.be.equal("""\rI test the console writer
           AssertionError: Some assertion happend""")

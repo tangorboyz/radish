@@ -18,16 +18,16 @@ class HookRegistryTestCase(RadishTestCase):
         empty_hook = {"before": [], "after": []}
 
         hookregistry = HookRegistry()
-        hookregistry.hooks.should.have.length_of(4)
-        hookregistry.hooks["all"].should.be.equal(empty_hook)
-        hookregistry.hooks["each_feature"].should.be.equal(empty_hook)
-        hookregistry.hooks["each_scenario"].should.be.equal(empty_hook)
-        hookregistry.hooks["each_step"].should.be.equal(empty_hook)
+        expect(hookregistry.hooks).to.have.length_of(4)
+        expect(hookregistry.hooks["all"]).to.be.equal(empty_hook)
+        expect(hookregistry.hooks["each_feature"]).to.be.equal(empty_hook)
+        expect(hookregistry.hooks["each_scenario"]).to.be.equal(empty_hook)
+        expect(hookregistry.hooks["each_step"]).to.be.equal(empty_hook)
 
-        HookRegistry.Hook.should.have.property("all")
-        HookRegistry.Hook.should.have.property("each_feature")
-        HookRegistry.Hook.should.have.property("each_scenario")
-        HookRegistry.Hook.should.have.property("each_step")
+        expect(HookRegistry.Hook).to.have.property("all")
+        expect(HookRegistry.Hook).to.have.property("each_feature")
+        expect(HookRegistry.Hook).to.have.property("each_scenario")
+        expect(HookRegistry.Hook).to.have.property("each_step")
 
     def test_register_as_hook(self):
         """
@@ -36,31 +36,31 @@ class HookRegistryTestCase(RadishTestCase):
         empty_hook = {"before": [], "after": []}
 
         hookregistry = HookRegistry()
-        hookregistry.hooks.should.have.length_of(4)
-        hookregistry.hooks["all"].should.be.equal(empty_hook)
-        hookregistry.hooks["each_feature"].should.be.equal(empty_hook)
-        hookregistry.hooks["each_scenario"].should.be.equal(empty_hook)
-        hookregistry.hooks["each_step"].should.be.equal(empty_hook)
+        expect(hookregistry.hooks).to.have.length_of(4)
+        expect(hookregistry.hooks["all"]).to.be.equal(empty_hook)
+        expect(hookregistry.hooks["each_feature"]).to.be.equal(empty_hook)
+        expect(hookregistry.hooks["each_scenario"]).to.be.equal(empty_hook)
+        expect(hookregistry.hooks["each_step"]).to.be.equal(empty_hook)
 
-        hookregistry.hooks["all"]["before"].should.have.length_of(0)
+        expect(hookregistry.hooks["all"]["before"]).to.have.length_of(0)
         hookregistry.register("before", "all", "some_func")
-        hookregistry.hooks["all"]["before"].should.have.length_of(1)
-        hookregistry.hooks["all"]["after"].should.have.length_of(0)
+        expect(hookregistry.hooks["all"]["before"]).to.have.length_of(1)
+        expect(hookregistry.hooks["all"]["after"]).to.have.length_of(0)
 
-        hookregistry.hooks["each_feature"]["before"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_feature"]["before"]).to.have.length_of(0)
         hookregistry.register("before", "each_feature", "some_func")
-        hookregistry.hooks["each_feature"]["before"].should.have.length_of(1)
-        hookregistry.hooks["each_feature"]["after"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_feature"]["before"]).to.have.length_of(1)
+        expect(hookregistry.hooks["each_feature"]["after"]).to.have.length_of(0)
 
-        hookregistry.hooks["each_scenario"]["before"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_scenario"]["before"]).to.have.length_of(0)
         hookregistry.register("before", "each_scenario", "some_func")
-        hookregistry.hooks["each_scenario"]["before"].should.have.length_of(1)
-        hookregistry.hooks["each_scenario"]["after"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_scenario"]["before"]).to.have.length_of(1)
+        expect(hookregistry.hooks["each_scenario"]["after"]).to.have.length_of(0)
 
-        hookregistry.hooks["each_step"]["before"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_step"]["before"]).to.have.length_of(0)
         hookregistry.register("before", "each_step", "some_func")
-        hookregistry.hooks["each_step"]["before"].should.have.length_of(1)
-        hookregistry.hooks["each_step"]["after"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_step"]["before"]).to.have.length_of(1)
+        expect(hookregistry.hooks["each_step"]["after"]).to.have.length_of(0)
 
     def test_decorating_with_hook(self):
         """
@@ -71,15 +71,15 @@ class HookRegistryTestCase(RadishTestCase):
         def some_func():
             pass
 
-        hookregistry.hooks["each_feature"]["before"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_feature"]["before"]).to.have.length_of(0)
         before.each_feature(some_func)
-        hookregistry.hooks["each_feature"]["before"].should.have.length_of(1)
-        hookregistry.hooks["each_feature"]["before"][0].should.be.equal(some_func)
+        expect(hookregistry.hooks["each_feature"]["before"]).to.have.length_of(1)
+        expect(hookregistry.hooks["each_feature"]["before"][0]).to.be.equal(some_func)
 
-        hookregistry.hooks["each_step"]["after"].should.have.length_of(0)
+        expect(hookregistry.hooks["each_step"]["after"]).to.have.length_of(0)
         after.each_step(some_func)
-        hookregistry.hooks["each_step"]["after"].should.have.length_of(1)
-        hookregistry.hooks["each_step"]["after"][0].should.be.equal(some_func)
+        expect(hookregistry.hooks["each_step"]["after"]).to.have.length_of(1)
+        expect(hookregistry.hooks["each_step"]["after"][0]).to.be.equal(some_func)
 
     def test_calling_registered_hooks(self):
         """
@@ -106,14 +106,14 @@ class HookRegistryTestCase(RadishTestCase):
         before.each_feature(hooked_c)
 
         hookregistry.call("before", "each_feature")
-        data.called_hooked_a.should.be.true
-        data.called_hooked_b.should.be.false
-        data.called_hooked_c.should.be.true
+        expect(data.called_hooked_a).to.be.true
+        expect(data.called_hooked_b).to.be.false
+        expect(data.called_hooked_c).to.be.true
 
         hookregistry.call("after", "each_step")
-        data.called_hooked_a.should.be.true
-        data.called_hooked_b.should.be.true
-        data.called_hooked_c.should.be.true
+        expect(data.called_hooked_a).to.be.true
+        expect(data.called_hooked_b).to.be.true
+        expect(data.called_hooked_c).to.be.true
 
     def test_calling_registered_hooks_with_arguments(self):
         """

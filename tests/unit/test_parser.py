@@ -22,24 +22,24 @@ class ParserTestCase(RadishTestCase):
         """
         core = Mock()
         en_feature_parser = FeatureParser(core, "/", 1, language="en")
-        en_feature_parser.keywords.feature.should.be.equal("Feature")
-        en_feature_parser.keywords.scenario.should.be.equal("Scenario")
-        en_feature_parser.keywords.scenario_outline.should.be.equal("Scenario Outline")
-        en_feature_parser.keywords.examples.should.be.equal("Examples")
+        expect(en_feature_parser.keywords.feature).to.be.equal("Feature")
+        expect(en_feature_parser.keywords.scenario).to.be.equal("Scenario")
+        expect(en_feature_parser.keywords.scenario_outline).to.be.equal("Scenario Outline")
+        expect(en_feature_parser.keywords.examples).to.be.equal("Examples")
 
         de_feature_parser = FeatureParser(core, "/", 1, language="de")
-        de_feature_parser.keywords.scenario.should.be.equal("Szenario")
-        de_feature_parser.keywords.scenario_outline.should.be.equal("Szenario Auslagerung")
-        de_feature_parser.keywords.examples.should.be.equal("Beispiele")
+        expect(de_feature_parser.keywords.scenario).to.be.equal("Szenario")
+        expect(de_feature_parser.keywords.scenario_outline).to.be.equal("Szenario Auslagerung")
+        expect(de_feature_parser.keywords.examples).to.be.equal("Beispiele")
 
-        FeatureParser.when.called_with(core, "/", 1, language="foo").should.throw(LanguageNotSupportedError)
+        expect(FeatureParser).when.called_with(core, "/", 1, language="foo").should.throw(LanguageNotSupportedError)
 
     def test_parse_unexisting_featurefile(self):
         """
             Test parsing of an unexisting featurefile
         """
         core = Mock()
-        FeatureParser.when.called_with(core, "nonexisting.feature", 1).should.throw(OSError, "Feature file at 'nonexisting.feature' does not exist")
+        expect(FeatureParser).when.called_with(core, "nonexisting.feature", 1).should.throw(OSError, "Feature file at 'nonexisting.feature' does not exist")
 
     def test_parse_empty_featurefile(self):
         """
@@ -48,7 +48,7 @@ class ParserTestCase(RadishTestCase):
         core = Mock()
         with NamedTemporaryFile("w+") as featurefile:
             parser = FeatureParser(core, featurefile.name, 1)
-            parser.parse.when.called_with().should.throw(RadishError, "No Feature found in file {0}".format(featurefile.name))
+            expect(parser.parse).when.called_with().should.throw(RadishError, "No Feature found in file {0}".format(featurefile.name))
 
     def test_parse_empty_feature(self):
         """
@@ -64,11 +64,11 @@ class ParserTestCase(RadishTestCase):
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.sentence.should.be.equal("some empty feature")
-            parser.feature.id.should.be.equal(1)
-            parser.feature.path.should.be.equal(featurefile.name)
-            parser.feature.line.should.be.equal(1)
-            parser.feature.scenarios.should.be.empty
+            expect(parser.feature.sentence).to.be.equal("some empty feature")
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.path).to.be.equal(featurefile.name)
+            expect(parser.feature.line).to.be.equal(1)
+            expect(parser.feature.scenarios).to.be.empty
 
     def test_parse_empty_feature_with_description(self):
         """
@@ -86,14 +86,14 @@ class ParserTestCase(RadishTestCase):
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.sentence.should.be.equal("some empty feature")
-            parser.feature.id.should.be.equal(1)
-            parser.feature.path.should.be.equal(featurefile.name)
-            parser.feature.line.should.be.equal(1)
-            parser.feature.scenarios.should.be.empty
-            parser.feature.description.should.have.length_of(2)
-            parser.feature.description[0].should.be.equal("In order to support cool software")
-            parser.feature.description[1].should.be.equal("I do fancy BDD testing with radish")
+            expect(parser.feature.sentence).to.be.equal("some empty feature")
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.path).to.be.equal(featurefile.name)
+            expect(parser.feature.line).to.be.equal(1)
+            expect(parser.feature.scenarios).to.be.empty
+            expect(parser.feature.description).to.have.length_of(2)
+            expect(parser.feature.description[0]).to.be.equal("In order to support cool software")
+            expect(parser.feature.description[1]).to.be.equal("I do fancy BDD testing with radish")
 
     def test_parse_featurefile_with_multiple_features(self):
         """
@@ -108,7 +108,7 @@ Feature: another empty feature"""
 
             core = Mock()
             parser = FeatureParser(core, featurefile.name, 1)
-            parser.parse.when.called_with().should.throw(RadishError, "radish supports only one Feature per feature file")
+            expect(parser.parse).when.called_with().should.throw(RadishError, "radish supports only one Feature per feature file")
 
     def test_parse_feature_with_empty_scenario(self):
         """
@@ -125,14 +125,14 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.id.should.be.equal(1)
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(1)
-            parser.feature.scenarios[0].id.should.be.equal(1)
-            parser.feature.scenarios[0].sentence.should.be.equal("some empty scenario")
-            parser.feature.scenarios[0].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].line.should.be.equal(2)
-            parser.feature.scenarios[0].steps.should.be.empty
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(1)
+            expect(parser.feature.scenarios[0].id).to.be.equal(1)
+            expect(parser.feature.scenarios[0].sentence).to.be.equal("some empty scenario")
+            expect(parser.feature.scenarios[0].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].line).to.be.equal(2)
+            expect(parser.feature.scenarios[0].steps).to.be.empty
 
     def test_parse_feature_with_one_scenario_and_steps(self):
         """
@@ -152,25 +152,25 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.id.should.be.equal(1)
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(1)
-            parser.feature.scenarios.should.have.length_of(1)
-            parser.feature.scenarios[0].sentence.should.be.equal("some fancy scenario")
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(1)
+            expect(parser.feature.scenarios).to.have.length_of(1)
+            expect(parser.feature.scenarios[0].sentence).to.be.equal("some fancy scenario")
 
-            parser.feature.scenarios[0].steps.should.have.length_of(3)
-            parser.feature.scenarios[0].steps[0].id.should.be.equal(1)
-            parser.feature.scenarios[0].steps[0].sentence.should.be.equal("Given I have the number 5")
-            parser.feature.scenarios[0].steps[0].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[0].line.should.be.equal(3)
-            parser.feature.scenarios[0].steps[1].id.should.be.equal(2)
-            parser.feature.scenarios[0].steps[1].sentence.should.be.equal("When I add 2 to my number")
-            parser.feature.scenarios[0].steps[1].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[1].line.should.be.equal(4)
-            parser.feature.scenarios[0].steps[2].id.should.be.equal(3)
-            parser.feature.scenarios[0].steps[2].sentence.should.be.equal("Then I expect my number to be 7")
-            parser.feature.scenarios[0].steps[2].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[2].line.should.be.equal(5)
+            expect(parser.feature.scenarios[0].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[0].steps[0].id).to.be.equal(1)
+            expect(parser.feature.scenarios[0].steps[0].sentence).to.be.equal("Given I have the number 5")
+            expect(parser.feature.scenarios[0].steps[0].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[0].line).to.be.equal(3)
+            expect(parser.feature.scenarios[0].steps[1].id).to.be.equal(2)
+            expect(parser.feature.scenarios[0].steps[1].sentence).to.be.equal("When I add 2 to my number")
+            expect(parser.feature.scenarios[0].steps[1].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[1].line).to.be.equal(4)
+            expect(parser.feature.scenarios[0].steps[2].id).to.be.equal(3)
+            expect(parser.feature.scenarios[0].steps[2].sentence).to.be.equal("Then I expect my number to be 7")
+            expect(parser.feature.scenarios[0].steps[2].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[2].line).to.be.equal(5)
 
     def test_parse_feature_with_multiple_scenarios(self):
         """
@@ -195,41 +195,41 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.id.should.be.equal(1)
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(2)
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(2)
 
-            parser.feature.scenarios[0].id.should.be.equal(1)
-            parser.feature.scenarios[0].sentence.should.be.equal("some fancy scenario")
-            parser.feature.scenarios[0].steps.should.have.length_of(3)
-            parser.feature.scenarios[0].steps[0].id.should.be.equal(1)
-            parser.feature.scenarios[0].steps[0].sentence.should.be.equal("Given I have the number 5")
-            parser.feature.scenarios[0].steps[0].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[0].line.should.be.equal(3)
-            parser.feature.scenarios[0].steps[1].id.should.be.equal(2)
-            parser.feature.scenarios[0].steps[1].sentence.should.be.equal("When I add 2 to my number")
-            parser.feature.scenarios[0].steps[1].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[1].line.should.be.equal(4)
-            parser.feature.scenarios[0].steps[2].id.should.be.equal(3)
-            parser.feature.scenarios[0].steps[2].sentence.should.be.equal("Then I expect my number to be 7")
-            parser.feature.scenarios[0].steps[2].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[2].line.should.be.equal(5)
+            expect(parser.feature.scenarios[0].id).to.be.equal(1)
+            expect(parser.feature.scenarios[0].sentence).to.be.equal("some fancy scenario")
+            expect(parser.feature.scenarios[0].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[0].steps[0].id).to.be.equal(1)
+            expect(parser.feature.scenarios[0].steps[0].sentence).to.be.equal("Given I have the number 5")
+            expect(parser.feature.scenarios[0].steps[0].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[0].line).to.be.equal(3)
+            expect(parser.feature.scenarios[0].steps[1].id).to.be.equal(2)
+            expect(parser.feature.scenarios[0].steps[1].sentence).to.be.equal("When I add 2 to my number")
+            expect(parser.feature.scenarios[0].steps[1].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[1].line).to.be.equal(4)
+            expect(parser.feature.scenarios[0].steps[2].id).to.be.equal(3)
+            expect(parser.feature.scenarios[0].steps[2].sentence).to.be.equal("Then I expect my number to be 7")
+            expect(parser.feature.scenarios[0].steps[2].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[2].line).to.be.equal(5)
 
-            parser.feature.scenarios[1].id.should.be.equal(2)
-            parser.feature.scenarios[1].sentence.should.be.equal("some other fancy scenario")
-            parser.feature.scenarios[1].steps.should.have.length_of(3)
-            parser.feature.scenarios[1].steps[0].id.should.be.equal(1)
-            parser.feature.scenarios[1].steps[0].sentence.should.be.equal("Given I have the number 50")
-            parser.feature.scenarios[1].steps[0].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[1].steps[0].line.should.be.equal(8)
-            parser.feature.scenarios[1].steps[1].id.should.be.equal(2)
-            parser.feature.scenarios[1].steps[1].sentence.should.be.equal("When I add 20 to my number")
-            parser.feature.scenarios[1].steps[1].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[1].steps[1].line.should.be.equal(9)
-            parser.feature.scenarios[1].steps[2].id.should.be.equal(3)
-            parser.feature.scenarios[1].steps[2].sentence.should.be.equal("Then I expect my number to be 70")
-            parser.feature.scenarios[1].steps[2].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[1].steps[2].line.should.be.equal(10)
+            expect(parser.feature.scenarios[1].id).to.be.equal(2)
+            expect(parser.feature.scenarios[1].sentence).to.be.equal("some other fancy scenario")
+            expect(parser.feature.scenarios[1].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[1].steps[0].id).to.be.equal(1)
+            expect(parser.feature.scenarios[1].steps[0].sentence).to.be.equal("Given I have the number 50")
+            expect(parser.feature.scenarios[1].steps[0].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[1].steps[0].line).to.be.equal(8)
+            expect(parser.feature.scenarios[1].steps[1].id).to.be.equal(2)
+            expect(parser.feature.scenarios[1].steps[1].sentence).to.be.equal("When I add 20 to my number")
+            expect(parser.feature.scenarios[1].steps[1].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[1].steps[1].line).to.be.equal(9)
+            expect(parser.feature.scenarios[1].steps[2].id).to.be.equal(3)
+            expect(parser.feature.scenarios[1].steps[2].sentence).to.be.equal("Then I expect my number to be 70")
+            expect(parser.feature.scenarios[1].steps[2].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[1].steps[2].line).to.be.equal(10)
 
     def test_feature_with_comments(self):
         """
@@ -258,34 +258,34 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(2)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(2)
 
-            parser.feature.scenarios[0].sentence.should.be.equal("some fancy scenario")
-            parser.feature.scenarios[0].line.should.be.equal(3)
-            parser.feature.scenarios[0].steps.should.have.length_of(3)
-            parser.feature.scenarios[0].steps[0].sentence.should.be.equal("Given I have the number 5")
-            parser.feature.scenarios[0].steps[0].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[0].line.should.be.equal(4)
-            parser.feature.scenarios[0].steps[1].sentence.should.be.equal("When I add 2 to my number")
-            parser.feature.scenarios[0].steps[1].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[1].line.should.be.equal(5)
-            parser.feature.scenarios[0].steps[2].sentence.should.be.equal("Then I expect my number to be 7")
-            parser.feature.scenarios[0].steps[2].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[0].steps[2].line.should.be.equal(7)
+            expect(parser.feature.scenarios[0].sentence).to.be.equal("some fancy scenario")
+            expect(parser.feature.scenarios[0].line).to.be.equal(3)
+            expect(parser.feature.scenarios[0].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[0].steps[0].sentence).to.be.equal("Given I have the number 5")
+            expect(parser.feature.scenarios[0].steps[0].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[0].line).to.be.equal(4)
+            expect(parser.feature.scenarios[0].steps[1].sentence).to.be.equal("When I add 2 to my number")
+            expect(parser.feature.scenarios[0].steps[1].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[1].line).to.be.equal(5)
+            expect(parser.feature.scenarios[0].steps[2].sentence).to.be.equal("Then I expect my number to be 7")
+            expect(parser.feature.scenarios[0].steps[2].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[0].steps[2].line).to.be.equal(7)
 
-            parser.feature.scenarios[1].sentence.should.be.equal("some other fancy scenario")
-            parser.feature.scenarios[1].line.should.be.equal(9)
-            parser.feature.scenarios[1].steps.should.have.length_of(3)
-            parser.feature.scenarios[1].steps[0].sentence.should.be.equal("Given I have the number 50")
-            parser.feature.scenarios[1].steps[0].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[1].steps[0].line.should.be.equal(10)
-            parser.feature.scenarios[1].steps[1].sentence.should.be.equal("When I add 20 to my number")
-            parser.feature.scenarios[1].steps[1].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[1].steps[1].line.should.be.equal(12)
-            parser.feature.scenarios[1].steps[2].sentence.should.be.equal("Then I expect my number to be 70")
-            parser.feature.scenarios[1].steps[2].path.should.be.equal(featurefile.name)
-            parser.feature.scenarios[1].steps[2].line.should.be.equal(13)
+            expect(parser.feature.scenarios[1].sentence).to.be.equal("some other fancy scenario")
+            expect(parser.feature.scenarios[1].line).to.be.equal(9)
+            expect(parser.feature.scenarios[1].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[1].steps[0].sentence).to.be.equal("Given I have the number 50")
+            expect(parser.feature.scenarios[1].steps[0].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[1].steps[0].line).to.be.equal(10)
+            expect(parser.feature.scenarios[1].steps[1].sentence).to.be.equal("When I add 20 to my number")
+            expect(parser.feature.scenarios[1].steps[1].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[1].steps[1].line).to.be.equal(12)
+            expect(parser.feature.scenarios[1].steps[2].sentence).to.be.equal("Then I expect my number to be 70")
+            expect(parser.feature.scenarios[1].steps[2].path).to.be.equal(featurefile.name)
+            expect(parser.feature.scenarios[1].steps[2].line).to.be.equal(13)
 
     def test_parse_feature_with_scenario_outline(self):
         """
@@ -312,62 +312,62 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.id.should.be.equal(1)
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(1)
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(1)
 
             scenario = parser.feature.scenarios[0]
-            scenario.should.be.a(ScenarioOutline)
-            scenario.id.should.be.equal(1)
-            scenario.sentence.should.be.equal("some fancy scenario")
+            expect(scenario).to.be.a(ScenarioOutline)
+            expect(scenario.id).to.be.equal(1)
+            expect(scenario.sentence).to.be.equal("some fancy scenario")
 
-            scenario.steps.should.have.length_of(3)
-            scenario.steps[0].id.should.be.equal(1)
-            scenario.steps[0].sentence.should.be.equal("Given I have the number <number>")
-            scenario.steps[0].path.should.be.equal(featurefile.name)
-            scenario.steps[0].line.should.be.equal(3)
-            scenario.steps[1].id.should.be.equal(2)
-            scenario.steps[1].sentence.should.be.equal("When I add <delta> to my number")
-            scenario.steps[1].path.should.be.equal(featurefile.name)
-            scenario.steps[1].line.should.be.equal(4)
-            scenario.steps[2].id.should.be.equal(3)
-            scenario.steps[2].sentence.should.be.equal("Then I expect my number to be <result>")
-            scenario.steps[2].path.should.be.equal(featurefile.name)
-            scenario.steps[2].line.should.be.equal(5)
+            expect(scenario.steps).to.have.length_of(3)
+            expect(scenario.steps[0].id).to.be.equal(1)
+            expect(scenario.steps[0].sentence).to.be.equal("Given I have the number <number>")
+            expect(scenario.steps[0].path).to.be.equal(featurefile.name)
+            expect(scenario.steps[0].line).to.be.equal(3)
+            expect(scenario.steps[1].id).to.be.equal(2)
+            expect(scenario.steps[1].sentence).to.be.equal("When I add <delta> to my number")
+            expect(scenario.steps[1].path).to.be.equal(featurefile.name)
+            expect(scenario.steps[1].line).to.be.equal(4)
+            expect(scenario.steps[2].id).to.be.equal(3)
+            expect(scenario.steps[2].sentence).to.be.equal("Then I expect my number to be <result>")
+            expect(scenario.steps[2].path).to.be.equal(featurefile.name)
+            expect(scenario.steps[2].line).to.be.equal(5)
 
-            scenario.examples_header.should.be.equal(["number", "delta", "result"])
-            scenario.examples.should.have.length_of(3)
-            scenario.examples[0].data.should.be.equal(["5", "2", "7"])
-            scenario.examples[1].data.should.be.equal(["10", "3", "13"])
-            scenario.examples[2].data.should.be.equal(["15", "6", "21"])
+            expect(scenario.examples_header).to.be.equal(["number", "delta", "result"])
+            expect(scenario.examples).to.have.length_of(3)
+            expect(scenario.examples[0].data).to.be.equal(["5", "2", "7"])
+            expect(scenario.examples[1].data).to.be.equal(["10", "3", "13"])
+            expect(scenario.examples[2].data).to.be.equal(["15", "6", "21"])
 
-            scenario.scenarios.should.have.length_of(3)
-            scenario.scenarios[0].id.should.be.equal(2)
-            scenario.scenarios[0].steps.should.have.length_of(3)
-            scenario.scenarios[0].steps[0].id.should.be.equal(1)
-            scenario.scenarios[0].steps[0].sentence.should.be.equal("Given I have the number 5")
-            scenario.scenarios[0].steps[1].id.should.be.equal(2)
-            scenario.scenarios[0].steps[1].sentence.should.be.equal("When I add 2 to my number")
-            scenario.scenarios[0].steps[2].id.should.be.equal(3)
-            scenario.scenarios[0].steps[2].sentence.should.be.equal("Then I expect my number to be 7")
+            expect(scenario.scenarios).to.have.length_of(3)
+            expect(scenario.scenarios[0].id).to.be.equal(2)
+            expect(scenario.scenarios[0].steps).to.have.length_of(3)
+            expect(scenario.scenarios[0].steps[0].id).to.be.equal(1)
+            expect(scenario.scenarios[0].steps[0].sentence).to.be.equal("Given I have the number 5")
+            expect(scenario.scenarios[0].steps[1].id).to.be.equal(2)
+            expect(scenario.scenarios[0].steps[1].sentence).to.be.equal("When I add 2 to my number")
+            expect(scenario.scenarios[0].steps[2].id).to.be.equal(3)
+            expect(scenario.scenarios[0].steps[2].sentence).to.be.equal("Then I expect my number to be 7")
 
-            scenario.scenarios[1].id.should.be.equal(3)
-            scenario.scenarios[1].steps.should.have.length_of(3)
-            scenario.scenarios[0].steps[0].id.should.be.equal(1)
-            scenario.scenarios[1].steps[0].sentence.should.be.equal("Given I have the number 10")
-            scenario.scenarios[1].steps[1].id.should.be.equal(2)
-            scenario.scenarios[1].steps[1].sentence.should.be.equal("When I add 3 to my number")
-            scenario.scenarios[1].steps[2].id.should.be.equal(3)
-            scenario.scenarios[1].steps[2].sentence.should.be.equal("Then I expect my number to be 13")
+            expect(scenario.scenarios[1].id).to.be.equal(3)
+            expect(scenario.scenarios[1].steps).to.have.length_of(3)
+            expect(scenario.scenarios[0].steps[0].id).to.be.equal(1)
+            expect(scenario.scenarios[1].steps[0].sentence).to.be.equal("Given I have the number 10")
+            expect(scenario.scenarios[1].steps[1].id).to.be.equal(2)
+            expect(scenario.scenarios[1].steps[1].sentence).to.be.equal("When I add 3 to my number")
+            expect(scenario.scenarios[1].steps[2].id).to.be.equal(3)
+            expect(scenario.scenarios[1].steps[2].sentence).to.be.equal("Then I expect my number to be 13")
 
-            scenario.scenarios[2].id.should.be.equal(4)
-            scenario.scenarios[2].steps.should.have.length_of(3)
-            scenario.scenarios[2].steps[0].id.should.be.equal(1)
-            scenario.scenarios[2].steps[0].sentence.should.be.equal("Given I have the number 15")
-            scenario.scenarios[2].steps[1].id.should.be.equal(2)
-            scenario.scenarios[2].steps[1].sentence.should.be.equal("When I add 6 to my number")
-            scenario.scenarios[2].steps[2].id.should.be.equal(3)
-            scenario.scenarios[2].steps[2].sentence.should.be.equal("Then I expect my number to be 21")
+            expect(scenario.scenarios[2].id).to.be.equal(4)
+            expect(scenario.scenarios[2].steps).to.have.length_of(3)
+            expect(scenario.scenarios[2].steps[0].id).to.be.equal(1)
+            expect(scenario.scenarios[2].steps[0].sentence).to.be.equal("Given I have the number 15")
+            expect(scenario.scenarios[2].steps[1].id).to.be.equal(2)
+            expect(scenario.scenarios[2].steps[1].sentence).to.be.equal("When I add 6 to my number")
+            expect(scenario.scenarios[2].steps[2].id).to.be.equal(3)
+            expect(scenario.scenarios[2].steps[2].sentence).to.be.equal("Then I expect my number to be 21")
 
     def test_parse_feature_with_scenario_and_scenario_outline(self):
         """
@@ -404,39 +404,39 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.id.should.be.equal(1)
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(3)
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(3)
 
-            parser.feature.scenarios[0].should.be.a(Scenario)
-            parser.feature.scenarios[0].id.should.be.equal(1)
-            parser.feature.scenarios[0].sentence.should.be.equal("some normal scenario")
-            parser.feature.scenarios[0].steps.should.have.length_of(3)
-            parser.feature.scenarios[0].steps[0].sentence.should.be.equal("Given I do some stuff")
-            parser.feature.scenarios[0].steps[1].sentence.should.be.equal("When I modify it")
-            parser.feature.scenarios[0].steps[2].sentence.should.be.equal("Then I expect something else")
+            expect(parser.feature.scenarios[0]).to.be.a(Scenario)
+            expect(parser.feature.scenarios[0].id).to.be.equal(1)
+            expect(parser.feature.scenarios[0].sentence).to.be.equal("some normal scenario")
+            expect(parser.feature.scenarios[0].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[0].steps[0].sentence).to.be.equal("Given I do some stuff")
+            expect(parser.feature.scenarios[0].steps[1].sentence).to.be.equal("When I modify it")
+            expect(parser.feature.scenarios[0].steps[2].sentence).to.be.equal("Then I expect something else")
 
-            parser.feature.scenarios[1].should.be.a(ScenarioOutline)
-            parser.feature.scenarios[1].id.should.be.equal(2)
-            parser.feature.scenarios[1].sentence.should.be.equal("some fancy scenario")
-            parser.feature.scenarios[1].steps.should.have.length_of(3)
-            parser.feature.scenarios[1].steps[0].sentence.should.be.equal("Given I have the number <number>")
-            parser.feature.scenarios[1].steps[1].sentence.should.be.equal("When I add <delta> to my number")
-            parser.feature.scenarios[1].steps[2].sentence.should.be.equal("Then I expect my number to be <result>")
+            expect(parser.feature.scenarios[1]).to.be.a(ScenarioOutline)
+            expect(parser.feature.scenarios[1].id).to.be.equal(2)
+            expect(parser.feature.scenarios[1].sentence).to.be.equal("some fancy scenario")
+            expect(parser.feature.scenarios[1].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[1].steps[0].sentence).to.be.equal("Given I have the number <number>")
+            expect(parser.feature.scenarios[1].steps[1].sentence).to.be.equal("When I add <delta> to my number")
+            expect(parser.feature.scenarios[1].steps[2].sentence).to.be.equal("Then I expect my number to be <result>")
 
-            parser.feature.scenarios[1].examples_header.should.be.equal(["number", "delta", "result"])
-            parser.feature.scenarios[1].examples.should.have.length_of(3)
-            parser.feature.scenarios[1].examples[0].data.should.be.equal(["5", "2", "7"])
-            parser.feature.scenarios[1].examples[1].data.should.be.equal(["10", "3", "13"])
-            parser.feature.scenarios[1].examples[2].data.should.be.equal(["15", "6", "21"])
+            expect(parser.feature.scenarios[1].examples_header).to.be.equal(["number", "delta", "result"])
+            expect(parser.feature.scenarios[1].examples).to.have.length_of(3)
+            expect(parser.feature.scenarios[1].examples[0].data).to.be.equal(["5", "2", "7"])
+            expect(parser.feature.scenarios[1].examples[1].data).to.be.equal(["10", "3", "13"])
+            expect(parser.feature.scenarios[1].examples[2].data).to.be.equal(["15", "6", "21"])
 
-            parser.feature.scenarios[2].should.be.a(Scenario)
-            parser.feature.scenarios[2].id.should.be.equal(6)
-            parser.feature.scenarios[2].sentence.should.be.equal("some other normal scenario")
-            parser.feature.scenarios[2].steps.should.have.length_of(3)
-            parser.feature.scenarios[2].steps[0].sentence.should.be.equal("Given I do some other stuff")
-            parser.feature.scenarios[2].steps[1].sentence.should.be.equal("When I modify it")
-            parser.feature.scenarios[2].steps[2].sentence.should.be.equal("Then I expect something else")
+            expect(parser.feature.scenarios[2]).to.be.a(Scenario)
+            expect(parser.feature.scenarios[2].id).to.be.equal(6)
+            expect(parser.feature.scenarios[2].sentence).to.be.equal("some other normal scenario")
+            expect(parser.feature.scenarios[2].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[2].steps[0].sentence).to.be.equal("Given I do some other stuff")
+            expect(parser.feature.scenarios[2].steps[1].sentence).to.be.equal("When I modify it")
+            expect(parser.feature.scenarios[2].steps[2].sentence).to.be.equal("Then I expect something else")
 
     def test_parse_feature_with_scenario_and_examples(self):
         """
@@ -461,7 +461,7 @@ Feature: another empty feature"""
 
             core = Mock()
             parser = FeatureParser(core, featurefile.name, 1)
-            parser.parse.when.called_with().should.throw(RadishError, "Scenario does not support Examples. Use 'Scenario Outline'")
+            expect(parser.parse).when.called_with().should.throw(RadishError, "Scenario does not support Examples. Use 'Scenario Outline'")
 
     def test_parse_steps_with_table(self):
         """
@@ -485,23 +485,23 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(1)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(1)
 
-            parser.feature.scenarios[0].should.be.a(Scenario)
-            parser.feature.scenarios[0].sentence.should.be.equal("some normal scenario")
-            parser.feature.scenarios[0].steps.should.have.length_of(3)
-            parser.feature.scenarios[0].steps[0].sentence.should.be.equal("Given I have the user")
-            parser.feature.scenarios[0].steps[0].table.should.have.length_of(3)
-            parser.feature.scenarios[0].steps[0].table[0].should.be.equal(["Bruce", "Wayne", "Batman"])
-            parser.feature.scenarios[0].steps[0].table[1].should.be.equal(["Chuck", "Norris", "PureAwesome"])
-            parser.feature.scenarios[0].steps[0].table[2].should.be.equal(["Peter", "Parker", "Spiderman"])
+            expect(parser.feature.scenarios[0]).to.be.a(Scenario)
+            expect(parser.feature.scenarios[0].sentence).to.be.equal("some normal scenario")
+            expect(parser.feature.scenarios[0].steps).to.have.length_of(3)
+            expect(parser.feature.scenarios[0].steps[0].sentence).to.be.equal("Given I have the user")
+            expect(parser.feature.scenarios[0].steps[0].table).to.have.length_of(3)
+            expect(parser.feature.scenarios[0].steps[0].table[0]).to.be.equal(["Bruce", "Wayne", "Batman"])
+            expect(parser.feature.scenarios[0].steps[0].table[1]).to.be.equal(["Chuck", "Norris", "PureAwesome"])
+            expect(parser.feature.scenarios[0].steps[0].table[2]).to.be.equal(["Peter", "Parker", "Spiderman"])
 
-            parser.feature.scenarios[0].steps[1].sentence.should.be.equal("When I register them in the database")
-            parser.feature.scenarios[0].steps[1].table.should.have.length_of(0)
+            expect(parser.feature.scenarios[0].steps[1].sentence).to.be.equal("When I register them in the database")
+            expect(parser.feature.scenarios[0].steps[1].table).to.have.length_of(0)
 
-            parser.feature.scenarios[0].steps[2].sentence.should.be.equal("Then I expect 3 entries in the database")
-            parser.feature.scenarios[0].steps[2].table.should.have.length_of(0)
+            expect(parser.feature.scenarios[0].steps[2].sentence).to.be.equal("Then I expect 3 entries in the database")
+            expect(parser.feature.scenarios[0].steps[2].table).to.have.length_of(0)
 
     def test_detect_scenario_loop(self):
         """
@@ -514,15 +514,15 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             result = parser._detect_scenario_loop(line)
 
-            result.should.be.a(tuple)
-            result[0].should.be.equal("Some fancy scenario loop")
-            result[1].should.be.equal(10)
+            expect(result).to.be.a(tuple)
+            expect(result[0]).to.be.equal("Some fancy scenario loop")
+            expect(result[1]).to.be.equal(10)
 
-            parser._detect_scenario_loop.when.called_with("").should.return_value(None)
-            parser._detect_scenario_loop.when.called_with("Scenario: Some fancy scenario").should.return_value(None)
-            parser._detect_scenario_loop.when.called_with("Scenario Outline: Some fancy scenario").should.return_value(None)
-            parser._detect_scenario_loop.when.called_with("Scenario Loop: Some fancy scenario").should.return_value(None)
-            parser._detect_scenario_loop.when.called_with("Scenario Loop 5.5: Some fancy scenario").should.return_value(None)
+            expect(parser._detect_scenario_loop).when.called_with("").should.return_value(None)
+            expect(parser._detect_scenario_loop).when.called_with("Scenario: Some fancy scenario").should.return_value(None)
+            expect(parser._detect_scenario_loop).when.called_with("Scenario Outline: Some fancy scenario").should.return_value(None)
+            expect(parser._detect_scenario_loop).when.called_with("Scenario Loop: Some fancy scenario").should.return_value(None)
+            expect(parser._detect_scenario_loop).when.called_with("Scenario Loop 5.5: Some fancy scenario").should.return_value(None)
 
     def test_parse_feature_with_scenario_loop(self):
         """
@@ -543,39 +543,39 @@ Feature: another empty feature"""
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.id.should.be.equal(1)
-            parser.feature.sentence.should.be.equal("some feature")
-            parser.feature.scenarios.should.have.length_of(1)
+            expect(parser.feature.id).to.be.equal(1)
+            expect(parser.feature.sentence).to.be.equal("some feature")
+            expect(parser.feature.scenarios).to.have.length_of(1)
 
             scenario = parser.feature.scenarios[0]
-            scenario.should.be.a(ScenarioLoop)
-            scenario.id.should.be.equal(1)
-            scenario.sentence.should.be.equal("some fancy scenario")
+            expect(scenario).to.be.a(ScenarioLoop)
+            expect(scenario.id).to.be.equal(1)
+            expect(scenario.sentence).to.be.equal("some fancy scenario")
 
-            scenario.steps.should.have.length_of(3)
-            scenario.steps[0].id.should.be.equal(1)
-            scenario.steps[0].sentence.should.be.equal("Given I have the number 1")
-            scenario.steps[0].path.should.be.equal(featurefile.name)
-            scenario.steps[0].line.should.be.equal(3)
-            scenario.steps[1].id.should.be.equal(2)
-            scenario.steps[1].sentence.should.be.equal("When I add 2 to my number")
-            scenario.steps[1].path.should.be.equal(featurefile.name)
-            scenario.steps[1].line.should.be.equal(4)
-            scenario.steps[2].id.should.be.equal(3)
-            scenario.steps[2].sentence.should.be.equal("Then I expect my number to be 3")
-            scenario.steps[2].path.should.be.equal(featurefile.name)
-            scenario.steps[2].line.should.be.equal(5)
+            expect(scenario.steps).to.have.length_of(3)
+            expect(scenario.steps[0].id).to.be.equal(1)
+            expect(scenario.steps[0].sentence).to.be.equal("Given I have the number 1")
+            expect(scenario.steps[0].path).to.be.equal(featurefile.name)
+            expect(scenario.steps[0].line).to.be.equal(3)
+            expect(scenario.steps[1].id).to.be.equal(2)
+            expect(scenario.steps[1].sentence).to.be.equal("When I add 2 to my number")
+            expect(scenario.steps[1].path).to.be.equal(featurefile.name)
+            expect(scenario.steps[1].line).to.be.equal(4)
+            expect(scenario.steps[2].id).to.be.equal(3)
+            expect(scenario.steps[2].sentence).to.be.equal("Then I expect my number to be 3")
+            expect(scenario.steps[2].path).to.be.equal(featurefile.name)
+            expect(scenario.steps[2].line).to.be.equal(5)
 
-            scenario.scenarios.should.have.length_of(10)
+            expect(scenario.scenarios).to.have.length_of(10)
             for i in range(10):
-                scenario.scenarios[i].id.should.be.equal(i + 2)
-                scenario.scenarios[i].steps.should.have.length_of(3)
-                scenario.scenarios[i].steps[0].id.should.be.equal(1)
-                scenario.scenarios[i].steps[0].sentence.should.be.equal("Given I have the number 1")
-                scenario.scenarios[i].steps[1].id.should.be.equal(2)
-                scenario.scenarios[i].steps[1].sentence.should.be.equal("When I add 2 to my number")
-                scenario.scenarios[i].steps[2].id.should.be.equal(3)
-                scenario.scenarios[i].steps[2].sentence.should.be.equal("Then I expect my number to be 3")
+                expect(scenario.scenarios[i].id).to.be.equal(i + 2)
+                expect(scenario.scenarios[i].steps).to.have.length_of(3)
+                expect(scenario.scenarios[i].steps[0].id).to.be.equal(1)
+                expect(scenario.scenarios[i].steps[0].sentence).to.be.equal("Given I have the number 1")
+                expect(scenario.scenarios[i].steps[1].id).to.be.equal(2)
+                expect(scenario.scenarios[i].steps[1].sentence).to.be.equal("When I add 2 to my number")
+                expect(scenario.scenarios[i].steps[2].id).to.be.equal(3)
+                expect(scenario.scenarios[i].steps[2].sentence).to.be.equal("Then I expect my number to be 3")
 
     def test_detect_tag(self):
         """
@@ -589,11 +589,11 @@ Feature: another empty feature"""
 
             core = Mock()
             parser = FeatureParser(core, featurefile.name, 1)
-            parser._detect_tag.when.called_with("@some_tag").should.return_value(("some_tag", None))
-            parser._detect_tag.when.called_with("@some_tag sdfg").should.return_value(("some_tag", None))
-            parser._detect_tag.when.called_with("@some_tag_with_arg(args)").should.return_value(("some_tag_with_arg", "args"))
-            parser._detect_tag.when.called_with("some_tag").should.return_value(None)
-            parser._detect_tag.when.called_with("some_tag sdfg").should.return_value(None)
+            expect(parser._detect_tag).when.called_with("@some_tag").should.return_value(("some_tag", None))
+            expect(parser._detect_tag).when.called_with("@some_tag sdfg").should.return_value(("some_tag", None))
+            expect(parser._detect_tag).when.called_with("@some_tag_with_arg(args)").should.return_value(("some_tag_with_arg", "args"))
+            expect(parser._detect_tag).when.called_with("some_tag").should.return_value(None)
+            expect(parser._detect_tag).when.called_with("some_tag sdfg").should.return_value(None)
 
     def test_parse_feature_with_tag(self):
         """
@@ -616,8 +616,8 @@ Feature: some feature
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.tags.should.have.length_of(1)
-            parser.feature.tags[0].name.should.be.equal("some_feature")
+            expect(parser.feature.tags).to.have.length_of(1)
+            expect(parser.feature.tags[0].name).to.be.equal("some_feature")
 
     def test_parse_feature_with_multiple_tags(self):
         """
@@ -642,10 +642,10 @@ Feature: some feature
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.tags.should.have.length_of(3)
-            parser.feature.tags[0].name.should.be.equal("some_feature")
-            parser.feature.tags[1].name.should.be.equal("has_scenario_loop")
-            parser.feature.tags[2].name.should.be.equal("add_numbers")
+            expect(parser.feature.tags).to.have.length_of(3)
+            expect(parser.feature.tags[0].name).to.be.equal("some_feature")
+            expect(parser.feature.tags[1].name).to.be.equal("has_scenario_loop")
+            expect(parser.feature.tags[2].name).to.be.equal("add_numbers")
 
     def test_parse_feature_with_scenario_with_tags(self):
         """
@@ -680,16 +680,16 @@ Feature: some feature
             parser = FeatureParser(core, featurefile.name, 1)
             parser.parse()
 
-            parser.feature.tags.should.have.length_of(1)
-            parser.feature.tags[0].name.should.be.equal("some_feature")
+            expect(parser.feature.tags).to.have.length_of(1)
+            expect(parser.feature.tags[0].name).to.be.equal("some_feature")
 
-            parser.feature.scenarios.should.have.length_of(3)
+            expect(parser.feature.scenarios).to.have.length_of(3)
 
-            parser.feature.scenarios[0].tags.should.have.length_of(1)
-            parser.feature.scenarios[0].tags[0].name.should.be.equal("some_scenario_loop")
+            expect(parser.feature.scenarios[0].tags).to.have.length_of(1)
+            expect(parser.feature.scenarios[0].tags[0].name).to.be.equal("some_scenario_loop")
 
-            parser.feature.scenarios[1].tags.should.be.empty
+            expect(parser.feature.scenarios[1].tags).to.be.empty
 
-            parser.feature.scenarios[2].tags.should.have.length_of(2)
-            parser.feature.scenarios[2].tags[0].name.should.be.equal("error_case")
-            parser.feature.scenarios[2].tags[1].name.should.be.equal("bad_case")
+            expect(parser.feature.scenarios[2].tags).to.have.length_of(2)
+            expect(parser.feature.scenarios[2].tags[0].name).to.be.equal("error_case")
+            expect(parser.feature.scenarios[2].tags[1].name).to.be.equal("bad_case")

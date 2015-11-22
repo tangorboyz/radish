@@ -21,22 +21,22 @@ class ScenarioTestCase(RadishTestCase):
         scenario = Scenario(1, "Scenario", "Some scenario", None, None, None)
         scenario.steps.extend([step_1, step_2, step_3])
 
-        scenario.state.should.be.equal(Step.State.UNTESTED)
+        expect(scenario.state).to.be.equal(Step.State.UNTESTED)
 
         step_1.state = Step.State.SKIPPED
-        scenario.state.should.be.equal(Step.State.SKIPPED)
+        expect(scenario.state).to.be.equal(Step.State.SKIPPED)
 
         step_1.state = Step.State.FAILED
-        scenario.state.should.be.equal(Step.State.FAILED)
+        expect(scenario.state).to.be.equal(Step.State.FAILED)
 
         step_2.state = Step.State.PASSED
-        scenario.state.should.be.equal(Step.State.FAILED)
+        expect(scenario.state).to.be.equal(Step.State.FAILED)
 
         step_3.state = Step.State.PASSED
-        scenario.state.should.be.equal(Step.State.FAILED)
+        expect(scenario.state).to.be.equal(Step.State.FAILED)
 
         step_1.state = Step.State.PASSED
-        scenario.state.should.be.equal(Step.State.PASSED)
+        expect(scenario.state).to.be.equal(Step.State.PASSED)
 
     def test_scenario_constants(self):
         """
@@ -47,11 +47,11 @@ class ScenarioTestCase(RadishTestCase):
         scenario = Scenario(1, "Scenario", "Some scenario", None, None, feature)
         scenario.context.constants.extend([("scenario_var_1", "3"), ("scenario_var_2", "4")])
 
-        scenario.constants.should.have.length_of(4)
-        scenario.constants[0].should.be.equal(("scenario_var_1", "3"))
-        scenario.constants[1].should.be.equal(("scenario_var_2", "4"))
-        scenario.constants[2].should.be.equal(("feature_var_1", "1"))
-        scenario.constants[3].should.be.equal(("feature_var_2", "2"))
+        expect(scenario.constants).to.have.length_of(4)
+        expect(scenario.constants[0]).to.be.equal(("scenario_var_1", "3"))
+        expect(scenario.constants[1]).to.be.equal(("scenario_var_2", "4"))
+        expect(scenario.constants[2]).to.be.equal(("feature_var_1", "1"))
+        expect(scenario.constants[3]).to.be.equal(("feature_var_2", "2"))
 
     def test_scenario_all_steps(self):
         """
@@ -64,10 +64,10 @@ class ScenarioTestCase(RadishTestCase):
         scenario = Scenario(1, "Scenario", "Some scenario", None, None, None)
         scenario.steps.extend([step_1, step_2, step_3])
 
-        scenario.all_steps.should.have.length_of(3)
-        scenario.all_steps[0].should.be.equal(step_1)
-        scenario.all_steps[1].should.be.equal(step_2)
-        scenario.all_steps[2].should.be.equal(step_3)
+        expect(scenario.all_steps).to.have.length_of(3)
+        expect(scenario.all_steps[0]).to.be.equal(step_1)
+        expect(scenario.all_steps[1]).to.be.equal(step_2)
+        expect(scenario.all_steps[2]).to.be.equal(step_3)
 
         precond_step_1 = Mock(state=Step.State.UNTESTED)
         precond_step_2 = Mock(state=Step.State.UNTESTED)
@@ -76,12 +76,12 @@ class ScenarioTestCase(RadishTestCase):
 
         scenario.preconditions.append(scenario_precond)
 
-        scenario.all_steps.should.have.length_of(5)
-        scenario.all_steps[0].should.be.equal(precond_step_1)
-        scenario.all_steps[1].should.be.equal(precond_step_2)
-        scenario.all_steps[2].should.be.equal(step_1)
-        scenario.all_steps[3].should.be.equal(step_2)
-        scenario.all_steps[4].should.be.equal(step_3)
+        expect(scenario.all_steps).to.have.length_of(5)
+        expect(scenario.all_steps[0]).to.be.equal(precond_step_1)
+        expect(scenario.all_steps[1]).to.be.equal(precond_step_2)
+        expect(scenario.all_steps[2]).to.be.equal(step_1)
+        expect(scenario.all_steps[3]).to.be.equal(step_2)
+        expect(scenario.all_steps[4]).to.be.equal(step_3)
 
     def test_scenario_get_failed_step(self):
         """
@@ -94,16 +94,16 @@ class ScenarioTestCase(RadishTestCase):
         scenario = Scenario(1, "Scenario", "Some scenario", None, None, None)
         scenario.steps.extend([step_1, step_2, step_3])
 
-        scenario.failed_step.should.be.equal(None)
+        expect(scenario.failed_step).to.be.equal(None)
 
         step_1.state = Step.State.FAILED
-        scenario.failed_step.should.be.equal(step_1)
+        expect(scenario.failed_step).to.be.equal(step_1)
 
         step_1.state = Step.State.PASSED
-        scenario.failed_step.should.be.equal(None)
+        expect(scenario.failed_step).to.be.equal(None)
 
         step_2.state = Step.State.FAILED
-        scenario.failed_step.should.be.equal(step_2)
+        expect(scenario.failed_step).to.be.equal(step_2)
 
     def test_scenario_has_to_run(self):
         """
@@ -113,24 +113,24 @@ class ScenarioTestCase(RadishTestCase):
 
         s = Scenario(1, "Scenario", "Some scenario", None, None, feature, [Scenario.Tag("foo", None), Scenario.Tag("bar", None), Scenario.Tag("bad_case", None)])
         s.absolute_id = 1
-        s.has_to_run.when.called_with(None, None, ["foo"]).should.return_value(True)
-        s.has_to_run.when.called_with(None, None, ["good_case", "foo"]).should.return_value(True)
-        s.has_to_run.when.called_with(None, None, ["good_case", "bar", "bad_case"]).should.return_value(True)
-        s.has_to_run.when.called_with(None, None, ["good_case"]).should.return_value(False)
+        expect(s.has_to_run).when.called_with(None, None, ["foo"]).should.return_value(True)
+        expect(s.has_to_run).when.called_with(None, None, ["good_case", "foo"]).should.return_value(True)
+        expect(s.has_to_run).when.called_with(None, None, ["good_case", "bar", "bad_case"]).should.return_value(True)
+        expect(s.has_to_run).when.called_with(None, None, ["good_case"]).should.return_value(False)
 
-        s.has_to_run.when.called_with([1], None, None).should.return_value(True)
-        s.has_to_run.when.called_with([1, 2], None, None).should.return_value(True)
-        s.has_to_run.when.called_with([2], None, None).should.return_value(False)
+        expect(s.has_to_run).when.called_with([1], None, None).should.return_value(True)
+        expect(s.has_to_run).when.called_with([1, 2], None, None).should.return_value(True)
+        expect(s.has_to_run).when.called_with([2], None, None).should.return_value(False)
 
-        s.has_to_run.when.called_with([1], None, ["good_case"]).should.return_value(True)
-        s.has_to_run.when.called_with([1, 2], None, ["foo", "bad_case"]).should.return_value(True)
-        s.has_to_run.when.called_with([5, 4], None, ["bad_case"]).should.return_value(True)
-        s.has_to_run.when.called_with([6], None, ["good_case"]).should.return_value(False)
+        expect(s.has_to_run).when.called_with([1], None, ["good_case"]).should.return_value(True)
+        expect(s.has_to_run).when.called_with([1, 2], None, ["foo", "bad_case"]).should.return_value(True)
+        expect(s.has_to_run).when.called_with([5, 4], None, ["bad_case"]).should.return_value(True)
+        expect(s.has_to_run).when.called_with([6], None, ["good_case"]).should.return_value(False)
 
-        s.has_to_run.when.called_with(None, ["feature"], None).should.return_value(False)
-        s.has_to_run.when.called_with(None, ["feature_bar"], None).should.return_value(True)
-        s.has_to_run.when.called_with(None, ["feature", "feature_bar"], None).should.return_value(True)
-        s.has_to_run.when.called_with(None, ["feature_foo"], None).should.return_value(True)
+        expect(s.has_to_run).when.called_with(None, ["feature"], None).should.return_value(False)
+        expect(s.has_to_run).when.called_with(None, ["feature_bar"], None).should.return_value(True)
+        expect(s.has_to_run).when.called_with(None, ["feature", "feature_bar"], None).should.return_value(True)
+        expect(s.has_to_run).when.called_with(None, ["feature_foo"], None).should.return_value(True)
 
     def test_scenario_after_parse_hook(self):
         """
@@ -146,10 +146,10 @@ class ScenarioTestCase(RadishTestCase):
         step_2.parent = scenario
         step_3.parent = scenario
 
-        scenario.all_steps.should.have.length_of(3)
-        scenario.all_steps[0].should.be.equal(step_1)
-        scenario.all_steps[1].should.be.equal(step_2)
-        scenario.all_steps[2].should.be.equal(step_3)
+        expect(scenario.all_steps).to.have.length_of(3)
+        expect(scenario.all_steps[0]).to.be.equal(step_1)
+        expect(scenario.all_steps[1]).to.be.equal(step_2)
+        expect(scenario.all_steps[2]).to.be.equal(step_3)
 
         scenario_precond = Scenario(2, "Scenario", "Some precond scenario", None, None, None)
         precond_step_1 = Mock(state=Step.State.UNTESTED, id=1)
@@ -162,26 +162,26 @@ class ScenarioTestCase(RadishTestCase):
         scenario.preconditions.append(scenario_precond)
 
         # check before 'after_parse': step id and parent should be wrong
-        scenario.all_steps[0].id.should.be.equal(1)
-        scenario.all_steps[1].id.should.be.equal(2)
-        scenario.all_steps[2].id.should.be.equal(1)
-        scenario.all_steps[3].id.should.be.equal(2)
-        scenario.all_steps[4].id.should.be.equal(3)
-        scenario.all_steps[0].parent.should.be.equal(scenario_precond)
-        scenario.all_steps[1].parent.should.be.equal(scenario_precond)
-        scenario.all_steps[2].parent.should.be.equal(scenario)
-        scenario.all_steps[3].parent.should.be.equal(scenario)
-        scenario.all_steps[4].parent.should.be.equal(scenario)
+        expect(scenario.all_steps[0].id).to.be.equal(1)
+        expect(scenario.all_steps[1].id).to.be.equal(2)
+        expect(scenario.all_steps[2].id).to.be.equal(1)
+        expect(scenario.all_steps[3].id).to.be.equal(2)
+        expect(scenario.all_steps[4].id).to.be.equal(3)
+        expect(scenario.all_steps[0].parent).to.be.equal(scenario_precond)
+        expect(scenario.all_steps[1].parent).to.be.equal(scenario_precond)
+        expect(scenario.all_steps[2].parent).to.be.equal(scenario)
+        expect(scenario.all_steps[3].parent).to.be.equal(scenario)
+        expect(scenario.all_steps[4].parent).to.be.equal(scenario)
 
         scenario.after_parse()
 
-        scenario.all_steps[0].id.should.be.equal(1)
-        scenario.all_steps[1].id.should.be.equal(2)
-        scenario.all_steps[2].id.should.be.equal(3)
-        scenario.all_steps[3].id.should.be.equal(4)
-        scenario.all_steps[4].id.should.be.equal(5)
-        scenario.all_steps[0].parent.should.be.equal(scenario)
-        scenario.all_steps[1].parent.should.be.equal(scenario)
-        scenario.all_steps[2].parent.should.be.equal(scenario)
-        scenario.all_steps[3].parent.should.be.equal(scenario)
-        scenario.all_steps[4].parent.should.be.equal(scenario)
+        expect(scenario.all_steps[0].id).to.be.equal(1)
+        expect(scenario.all_steps[1].id).to.be.equal(2)
+        expect(scenario.all_steps[2].id).to.be.equal(3)
+        expect(scenario.all_steps[3].id).to.be.equal(4)
+        expect(scenario.all_steps[4].id).to.be.equal(5)
+        expect(scenario.all_steps[0].parent).to.be.equal(scenario)
+        expect(scenario.all_steps[1].parent).to.be.equal(scenario)
+        expect(scenario.all_steps[2].parent).to.be.equal(scenario)
+        expect(scenario.all_steps[3].parent).to.be.equal(scenario)
+        expect(scenario.all_steps[4].parent).to.be.equal(scenario)
