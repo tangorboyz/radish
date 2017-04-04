@@ -1,0 +1,20 @@
+[[source]]
+verify_ssl = true
+url = "https://pypi.python.org/simple"
+
+[packages]
+pysingleton = "*"
+colorful = "*"
+docopt = "*"
+ipython = "*"
+tag-expressions = "*"
+lxml = "*"
+parse = "*"
+coverage = "*"
+PyYAML = "*"
+
+[dev-packages]
+nose = "*"
+rednose = "*"
+sure = "*"
+Sphinx = "*"
